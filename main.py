@@ -1,7 +1,7 @@
 from tkinter import *
 
 window = Tk()
-window.geometry("300x300")
+window.geometry("1440x1024")
 window.title("WalletWise")
 
 window.mainloop()
