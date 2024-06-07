@@ -3,7 +3,6 @@ from app_settings import *
 from os import *
 from PIL import ImageTk, Image
 
-
 class App():
 
     def __init__(self):
@@ -18,12 +17,14 @@ class App():
         self.searchBar=Frame(self.window, bg="#D9D9D9", width=997, height=102).pack(side=TOP, pady=25)
 
         #Logo top left
-
         image = Image.open("images/WalletWise_logo.png")
-        photo = ImageTk.PhotoImage(image.resize((196, 196)))
+        photo = ImageTk.PhotoImage(image.resize((375, 125)))
 
         self.mainframe=Frame(width=344, height=102)
         self.mainframe.place(x=20,y=22)
+
+        self.logo = Label(image=photo)
+        self.logo.place(x=20, y=22)
 
 
         self.home_button = Button(self.window, text="Home", height=5, width=8, command=self.home)
