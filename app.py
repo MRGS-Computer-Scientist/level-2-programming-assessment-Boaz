@@ -18,17 +18,37 @@ class App():
 
         #Logo top left
         image = Image.open("images/WalletWise_logo.png")
-        photo = ImageTk.PhotoImage(image.resize((375, 125)))
+        photo = ImageTk.PhotoImage(image.resize((370, 120)))
+
+        #load image 
+        self.home=Image.open("images/home.png")
+        home=ImageTk.PhotoImage(image.resize((5,5)))
+
+
 
         self.mainframe=Frame(width=344, height=102)
         self.mainframe.place(x=20,y=22)
 
         self.logo = Label(image=photo)
-        self.logo.place(x=20, y=22)
+        self.logo.place(x=6, y=15)
+
+        
+        # Load home.png image
+        home_image = Image.open("images/home.png")
+        self.home_photo = ImageTk.PhotoImage(home_image)
+
+        # Get the size of the image
+        width, height = home_image.size
+
+        # Create home button with the same size as the image
+        self.home_button = Button(self.window, image=self.home_photo, command=self.home, width=width, height=height)
 
 
-        self.home_button = Button(self.window, text="Home", height=5, width=8, command=self.home)
-        self.home_button.place(x=20,y=148)
+        # Create home button
+        self.home_button = Button(self.window, image=self.home_photo, command=self.home, width=50, height=50)
+        self.home_button.image = self.home_photo
+        self.home_button.place(x=20, y=148)
+
 
         
 
