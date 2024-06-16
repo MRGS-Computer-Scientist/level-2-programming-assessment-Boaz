@@ -39,27 +39,19 @@ class App:
         home_image_resized = home_image.resize((200, 75), Image.LANCZOS)
         self.home_photo = ImageTk.PhotoImage(home_image_resized)
 
-         # Create home button
-        self.home_button = Button(self.window, image=self.home_photo, command=self.home, bd=0, highlightthickness=0)
+        # Create home button
+        self.home_button = Button(self.window, image=self.home_photo, command=self.home, bd=0, highlightthickness=0, activebackground="#489cac")
         self.home_button.place(x=10, y=150)
 
-         # Load Budget image
+        # Load Budget image
         budget_button_path = path.join("images", "budget_button.png")
         budget_image = Image.open(budget_button_path)
         budget_image_resized = budget_image.resize((200, 75), Image.LANCZOS)
         self.budget_photo = ImageTk.PhotoImage(budget_image_resized)
 
-        # Create home button
-        self.budget_button = Button(self.window, image=self.budget_photo, command=self.home, bd=0, highlightthickness=0)
-        self.budget_button.place(x=10, y=300)
-
-
-    def home(self):
-        pass
-
-       
-
-        
+        # Create budget button
+        self.budget_button = Button(self.window, image=self.budget_photo, command=self.home, bd=0, highlightthickness=0, activebackground="#489cac")
+        self.budget_button.place(x=28, y=235)
 
 if __name__ == "__main__":
     app = App()
