@@ -1,14 +1,22 @@
 from tkinter import *
-from app_settings import *  # Ensure this module is available and correctly configured
+from datetime import datetime
+from app_settings import *
 from os import path
 from PIL import ImageTk, Image
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 class App:
 
     def __init__(self):
+        super().__init__()
+
         self.window = Tk()
         self.window.geometry("1440x1024")
         self.window.title("WalletWise")
+
+        self.current_frame = "Home"
 
         self.create_widgets()
         self.window.mainloop()
@@ -40,7 +48,7 @@ class App:
         self.home_photo = ImageTk.PhotoImage(home_image_resized)
 
         # Create home button
-        self.home_button = Button(self.window, image=self.home_photo, command=self.home, bd=0, highlightthickness=0, activebackground="#489cac")
+        self.home_button = Button(self.window, image=self.home_photo, command=self.home_photo, bd=0, highlightthickness=0, activebackground="#489cac")
         self.home_button.place(x=10, y=150)
 
         # Load Budget image
@@ -50,8 +58,13 @@ class App:
         self.budget_photo = ImageTk.PhotoImage(budget_image_resized)
 
         # Create budget button
-        self.budget_button = Button(self.window, image=self.budget_photo, command=self.home, bd=0, highlightthickness=0, activebackground="#489cac")
+        self.budget_button = Button(self.window, image=self.budget_photo, command=self.budget_photo, bd=0, highlightthickness=0, activebackground="#489cac")
         self.budget_button.place(x=28, y=235)
+    
+    #Budget button code
+    def budget():
+        pass
+
 
 if __name__ == "__main__":
     app = App()
