@@ -1,155 +1,207 @@
-from tkinter import *
 import tkinter as tk
-from tkinter import messagebox
-from datetime import datetime
-from os import path
-from PIL import ImageTk, Image
-import matplotlib.pyplot as plt
-import numpy as np
+from tkinter import ttk, messagebox, simpledialog
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib.pyplot as plt
 
-class App:
+# Initialize the main application window
+root = tk.Tk()
+root.title("WalletWise")
+root.geometry("800x600")
 
-    def __init__(self):
-        self.window = Tk()
-        self.window.geometry("1440x1024")
-        self.window.title("WalletWise")
+# Global dictionary to store expenses
+expenses = {
+    "Housing": 0,
+    "Food": 0,
+    "Car": 0,
+    "Entertainment": 0,
+    "Insurance": 0,
+    "Gas": 0,
+    "Savings": 0,
+}
 
-        self.current_frame = None
+# List to store transaction history
+transactions = []
 
-        self.create_widgets()
-        self.show_home()  # Show the home frame initially
-        self.window.mainloop()
+# Function to navigate to the Home frame
+def show_home():
+    home_frame.tkraise()
 
-    def create_widgets(self):
-        # Navigation Bar to the left
-        self.navBar = Frame(self.window, bg="#1b2e38", width=385, height=1024)
-        self.navBar.pack(side=LEFT, fill=Y)
 
-        # Logo top left
-        logo_label = Label(self.navBar, text="WalletWise", fg="white", bg="#1b2e38", font=("Arial", 24))
-        logo_label.pack(pady=(20, 50))
+# Function to navigate to the Budget frame
+def show_budget():
+    update_pie_chart()
+    budget_frame.tkraise()
 
-        # Home button
-        self.home_button = Button(self.navBar, text="Home", font=("Arial", 20), bg="#1b2e38", fg="white", command=self.show_home)
-        self.home_button.pack(fill=X)
 
-        # Budget button
-        self.budget_button = Button(self.navBar, text="Budget", font=("Arial", 20), bg="#1b2e38", fg="white", command=self.show_budget)
-        self.budget_button.pack(fill=X)
-        
-        # Main content frame
-        self.main_content = Frame(self.window, bg="#FFFFFF", width=997, height=922)
-        self.main_content.place(x=385, y=102)
-
-    def clear_frame(self):
-        for widget in self.main_content.winfo_children():
-            widget.destroy()
-
-    def show_home(self):
-        self.clear_frame()
-        self.current_frame = "Home"
-        
-        # Search bar
-        self.search_bar = Frame(self.main_content, bg="#D9D9D9", width=997, height=102)
-        self.search_bar.pack(side=TOP, pady=10)
-        search_label = Label(self.search_bar, text="Search", bg="#D9D9D9", font=("Arial", 20))
-        search_label.pack(side=LEFT, padx=20)
-
-        # Expense input fields
-        Label(self.main_content, text="Expense amount:", font=("Arial", 14)).place(x=50, y=150)
-        self.expense_amount_entry = Entry(self.main_content)
-        self.expense_amount_entry.place(x=250, y=150, width=200)
-
-        Label(self.main_content, text="Item Description:", font=("Arial", 14)).place(x=50, y=200)
-        self.item_description_entry = Entry(self.main_content)
-        self.item_description_entry.place(x=250, y=200, width=200)
-
-        Label(self.main_content, text="Date(YYYY-MM-DD):", font=("Arial", 14)).place(x=50, y=250)
-        self.date_entry = Entry(self.main_content)
-        self.date_entry.place(x=250, y=250, width=200)
-
-        Button(self.main_content, text="Add Expense", command=self.add_expense, font=("Arial", 14)).place(x=250, y=300)
-        
-        # Transactions listbox
-        Label(self.main_content, text="Transactions:", font=("Arial", 14)).place(x=50, y=350)
-        self.transactions_listbox = Listbox(self.main_content)
-        self.transactions_listbox.place(x=250, y=350, width=400, height=150)
-        
-        # Edit, Delete, Show Chart, and Exit buttons
-        self.edit_expense_button = Button(self.main_content, text="Edit Expense", command=self.edit_expense, font=("Arial", 14))
-        self.edit_expense_button.place(x=700, y=350)
-        
-        self.delete_expense_button = Button(self.main_content, text="Delete Expense", command=self.delete_expense, font=("Arial", 14))
-        self.delete_expense_button.place(x=700, y=400)
-        
-        self.show_chart_button = Button(self.main_content, text="Show Chart", command=self.show_chart, font=("Arial", 14))
-        self.show_chart_button.place(x=700, y=450)
-        
-        self.exit_button = Button(self.main_content, text="Exit", command=self.window.quit, font=("Arial", 14))
-        self.exit_button.place(x=700, y=500)
-
-    def show_budget(self):
-        self.clear_frame()
-        self.current_frame = "Budget"
-        
-        # Search bar
-        self.search_bar = Frame(self.main_content, bg="#D9D9D9", width=997, height=102)
-        self.search_bar.pack(side=TOP, pady=10)
-        search_label = Label(self.search_bar, text="Search", bg="#D9D9D9", font=("Arial", 20))
-        search_label.pack(side=LEFT, padx=20)
-        
-        # Display budget image (simulated with a placeholder)
-        image_path = path.join("/mnt/data", "image.png")
-        budget_image = Image.open(image_path)
-        budget_image_resized = budget_image.resize((997, 820), Image.LANCZOS)
-        self.budget_photo = ImageTk.PhotoImage(budget_image_resized)
-        
-        self.budget_image_label = Label(self.main_content, image=self.budget_photo, bd=0, highlightthickness=0)
-        self.budget_image_label.pack(expand=True)
-
-    def add_expense(self):
-        expense = self.expense_amount_entry.get()
-        description = self.item_description_entry.get()
-        date = self.date_entry.get()
-        if expense and description and date:
-            self.transactions_listbox.insert(END, f"{date}: {description} - ${expense}")
-            self.expense_amount_entry.delete(0, END)
-            self.item_description_entry.delete(0, END)
-            self.date_entry.delete(0, END)
-        else:
-            messagebox.showwarning("Input Error", "All fields are required.")
-    
-    def edit_expense(self):
+# Function to add an expense
+def add_expense():
+    category = category_var.get()
+    amount = amount_var.get()
+    if category and amount:
         try:
-            selected_index = self.transactions_listbox.curselection()[0]
-            selected_item = self.transactions_listbox.get(selected_index)
-            date, rest = selected_item.split(": ")
-            description, expense = rest.split(" - $")
-            
-            self.expense_amount_entry.delete(0, END)
-            self.expense_amount_entry.insert(0, expense)
-            
-            self.item_description_entry.delete(0, END)
-            self.item_description_entry.insert(0, description)
-            
-            self.date_entry.delete(0, END)
-            self.date_entry.insert(0, date)
-            
-            self.transactions_listbox.delete(selected_index)
-        except IndexError:
-            messagebox.showwarning("Selection Error", "Select a transaction to edit.")
-    
-    def delete_expense(self):
-        try:
-            selected_index = self.transactions_listbox.curselection()[0]
-            self.transactions_listbox.delete(selected_index)
-        except IndexError:
-            messagebox.showwarning("Selection Error", "Select a transaction to delete.")
-    
-    def show_chart(self):
-        messagebox.showinfo("Show Chart", "Chart functionality not implemented.")
- 
-        
-if __name__ == "__main__":
-    app = App()
+            amount = float(amount)
+            expenses[category] += amount
+            transactions.append((category, amount))
+            update_transaction_list()
+            messagebox.showinfo("Success", f"Added ${amount} to {category}")
+            amount_var.set("")
+        except ValueError:
+            messagebox.showerror("Error", "Please enter a valid amount")
+    else:
+        messagebox.showerror("Error", "Please fill out all fields")
+
+
+# Function to update the pie chart
+def update_pie_chart():
+    labels = expenses.keys()
+    sizes = expenses.values()
+    fig.clear()
+    ax = fig.add_subplot(111)
+    wedges, texts, autotexts = ax.pie(
+        sizes,
+        labels=labels,
+        autopct="%1.1f%%",
+        startangle=140,
+        pctdistance=0.85,  # distance of the percentage text from the center
+    )
+
+    # Set properties of labels and autopct texts to improve readability
+    for text in texts:
+        text.set_fontsize(10)
+        text.set_color("black")
+    for autotext in autotexts:
+        autotext.set_fontsize(8)
+        autotext.set_color("white")
+
+    # Draw a circle at the center to make it look like a donut chart
+    centre_circle = plt.Circle((0, 0), 0.70, fc="white")
+    fig.gca().add_artist(centre_circle)
+
+    ax.axis("equal")
+    canvas.draw()
+
+
+# Function to update the transaction list
+def update_transaction_list():
+    transaction_listbox.delete(0, tk.END)
+    for i, transaction in enumerate(transactions):
+        transaction_listbox.insert(
+            tk.END, f"{i + 1}. {transaction[0]}: ${transaction[1]:.2f}"
+        )
+
+
+# Function to edit an expense
+def edit_expense():
+    try:
+        selected_index = transaction_listbox.curselection()[0]
+        category, amount = transactions[selected_index]
+        new_amount = simpledialog.askfloat(
+            "Edit Expense", f"Edit amount for {category}:", initialvalue=amount
+        )
+        if new_amount is not None:
+            expenses[category] -= amount
+            expenses[category] += new_amount
+            transactions[selected_index] = (category, new_amount)
+            update_transaction_list()
+            messagebox.showinfo("Success", "Expense updated successfully")
+    except IndexError:
+        messagebox.showerror("Error", "No transaction selected")
+
+
+# Function to delete an expense
+def delete_expense():
+    try:
+        selected_index = transaction_listbox.curselection()[0]
+        category, amount = transactions[selected_index]
+        expenses[category] -= amount
+        del transactions[selected_index]
+        update_transaction_list()
+        messagebox.showinfo("Success", "Expense deleted successfully")
+    except IndexError:
+        messagebox.showerror("Error", "No transaction selected")
+
+
+# Create a main frame to hold navigation buttons
+main_frame = tk.Frame(root, bg="black", width=200)
+main_frame.pack(side="left", fill="y")
+
+# Create frames for Home and Budget
+home_frame = tk.Frame(root, bg="white")
+budget_frame = tk.Frame(root, bg="white")
+
+for frame in (home_frame, budget_frame):
+    frame.place(relx=0.25, rely=0, relwidth=0.75, relheight=1)
+
+# Navigation buttons
+button_width = 20
+
+home_button = tk.Button(
+    main_frame,
+    text="Home",
+    command=show_home,
+    bg="orange",
+    fg="white",
+    width=button_width,
+)
+budget_button = tk.Button(
+    main_frame,
+    text="Budget",
+    command=show_budget,
+    bg="orange",
+    fg="white",
+    width=button_width,
+)
+
+home_button.pack(fill="x")
+budget_button.pack(fill="x")
+
+# Home frame content
+tk.Label(
+    home_frame, text="Home - Input Expenses", font=("Helvetica", 16), bg="white"
+).pack(pady=20)
+
+category_var = tk.StringVar()
+amount_var = tk.StringVar()
+
+tk.Label(home_frame, text="Category:", bg="white").pack(pady=5)
+category_entry = ttk.Combobox(home_frame, textvariable=category_var)
+category_entry["values"] = list(expenses.keys())
+category_entry.pack(pady=5)
+
+tk.Label(home_frame, text="Amount:", bg="white").pack(pady=5)
+amount_entry = tk.Entry(home_frame, textvariable=amount_var)
+amount_entry.pack(pady=5)
+
+add_button = tk.Button(
+    home_frame, text="Add Expense", command=add_expense, bg="green", fg="white"
+)
+add_button.pack(pady=20)
+
+tk.Label(home_frame, text="Transactions:", bg="white").pack(pady=5)
+transaction_listbox = tk.Listbox(home_frame)
+transaction_listbox.pack(pady=5, fill=tk.BOTH, expand=True)
+
+edit_button = tk.Button(
+    home_frame, text="Edit Selected", command=edit_expense, bg="blue", fg="white"
+)
+edit_button.pack(side=tk.LEFT, padx=10, pady=10)
+
+delete_button = tk.Button(
+    home_frame, text="Delete Selected", command=delete_expense, bg="red", fg="white"
+)
+delete_button.pack(side=tk.RIGHT, padx=10, pady=10)
+
+# Budget frame content
+tk.Label(
+    budget_frame, text="Budget - Monthly Budgeting", font=("Helvetica", 16), bg="white"
+).pack(pady=20)
+
+fig = plt.figure(figsize=(6, 4))
+canvas = FigureCanvasTkAgg(fig, master=budget_frame)
+canvas.get_tk_widget().pack()
+
+# Start the application with the Home frame
+show_home()
+
+# Run the Tkinter event loop
+root.mainloop()
